@@ -4,6 +4,7 @@ import joblib
 import pandas as pd
 import numpy
 import os
+import requests
 
 app = Flask(__name__)
 
@@ -44,7 +45,7 @@ def simulate_product(data):
     data_row=[gender,age,pre_product,price,sale];
     data_test.append(data_row);
 
-  print(data_test)
+  #print(data_test)
 
   return data_test;
 
@@ -64,6 +65,14 @@ def unique(list1):
     return unique_list;
 
 
+def getListProduct(data):
+  list_products=[];
+  for productID in data:
+    r = requests.get('https://khoaluanecommerce.herokuapp.com/products/'+str(productID))
+    product = r.json()
+    list_products.append(product)
+  return list_products;
+
 @app.route('/json-example')
 def json_example():
     return 'JSON Object Example'
@@ -71,7 +80,7 @@ def json_example():
 def recomendation_product():
 
   #samples_to_predict=[[1,22,21,109,1],[1,16,35,50,1]]
-  print(request.json)
+  #print(request.json)
   samples_to_predict=simulate_product(request.json)
   samples_to_predict.append([1,16,35,50,1]);
   samples_to_predict.append([1,22,21,109,1]);
@@ -79,7 +88,8 @@ def recomendation_product():
   value=model_predict.predict(numpy.array(samples_to_predict))
   #print(type(value))
   result=unique(value.tolist());
-  return jsonify({'prediction': result});
+  list_product=getListProduct(result);
+  return jsonify({'prediction': list_product});
 
 port = int(os.environ.get("PORT", 5000))
 
