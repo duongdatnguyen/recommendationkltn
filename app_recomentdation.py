@@ -3,6 +3,7 @@ from flask import request
 import joblib 
 import pandas as pd
 import numpy
+import os
 
 app = Flask(__name__)
 
@@ -80,6 +81,8 @@ def recomendation_product():
   result=unique(value.tolist());
   return jsonify({'prediction': result});
 
+port = int(os.environ.get("PORT", 5000))
+
 if __name__ == '__main__':
   model_predict = joblib.load('recomendation_model.sav')
-  app.run()
+  app.run(host='0.0.0.0', port=port)
