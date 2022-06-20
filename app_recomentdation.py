@@ -82,4 +82,4 @@ def recomendation_product():
 
 if __name__ == '__main__':
   model_predict = joblib.load('recomendation_model.sav')
-  app.run(host='0.0.0.0', port=5001)
+  app.run()
